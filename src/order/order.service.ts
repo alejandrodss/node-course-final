@@ -1,4 +1,4 @@
-import { Order, OrderBase, PostOrder } from "../types";
+import { Cart, Order, OrderBase, PostOrder } from "../types";
 
 export class OrderService {
   orderRepository : OrderBase;
@@ -7,8 +7,15 @@ export class OrderService {
     this.orderRepository = orderRepository;
   }
 
-  createOrder(order: PostOrder) : Order {
-    return this.orderRepository.createOrder(order);
+  createOrder(userId: string, cart: Cart) : Order {
+    const newOrder: PostOrder = {
+      userId,
+      cartId: cart.id,
+      items: cart.items,
+      comments: '',
+      status: 'created'
+    }
+    return this.orderRepository.createOrder(newOrder);
   }
 
   checkoutOrder(orderId: string) {

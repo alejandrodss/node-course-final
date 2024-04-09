@@ -13,7 +13,7 @@ export interface UserBase {
   listUsers(): User[];
   createUser(user: PostUser): void;
   deleteUser(id: string): void;
-};
+}
 
 export type Product = {
   id: string,
@@ -30,7 +30,7 @@ export interface ProductBase {
   listProducts(): Product[];
   createProduct(product: PostProduct): void;
   deleteProduct(id: string): void;
-};
+}
 
 export type CartItem = {
   product: Product,
@@ -56,7 +56,7 @@ export interface CartBase {
   createCart(userId: string): Cart;
   updateCart(userId: string, productId: string, count: number, availableProducts: Product[]): Cart;
   deleteCart(userId: string): void;
-};
+}
 
 type Payment = {
   type: string,
