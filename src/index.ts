@@ -1,18 +1,17 @@
 import express, { Request, Response, NextFunction} from 'express';
-import Joi from 'joi';
 
-import Datasource from './src/Datasource';
-import UserController from './src/user/user.controller';
-import ProductController from './src/product/product.controller';
-import CartController from './src/cart/cart.controller';
-import OrderController from './src/order/order.controller';
+import Datasource from './Datasource';
+import UserController from './user/user.controller';
+import ProductController from './product/product.controller';
+import CartController from './cart/cart.controller';
+import OrderController from './order/order.controller';
 
-import { UserRepository } from './src/user/user.repository';
-import { ProductRepository } from './src/product/product.repository';
-import { CartRepository } from './src/cart/cart.repository';
-import { OrderRepostiory } from './src/order/order.repository';
+import { UserRepository } from './user/user.repository';
+import { ProductRepository } from './product/product.repository';
+import { CartRepository } from './cart/cart.repository';
+import { OrderRepostiory } from './order/order.repository';
 
-import { UserService } from './src/user/user.service';
+import { UserService } from './user/user.service';
 
 const app = express();
 
@@ -29,11 +28,6 @@ const userRepository = new UserRepository(database.users);
 const productRepository = new ProductRepository(database.products);
 const cartRepository = new CartRepository(database.carts);
 const orderRepository = new OrderRepostiory(database.orders);
-
-const putCartSchema = Joi.object({
-  productId: Joi.string().uuid().required(),
-  count: Joi.number().integer().min(1).required()
-});
 
 //Middlewares
 const userService = new UserService(userRepository);
@@ -63,26 +57,10 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-const validatePutCartBody = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    console.log(req.body);
-    await putCartSchema.validateAsync(req.body);
-    next();
-  } catch (err) {
-    console.log("logging there", err)
-    res.status(400).send({
-      "data": null,
-      "error": {
-        "message": "Products are not valid"
-      }
-    });
-  }
-}
-
 // Routers
 const userRouter = UserController(userRepository);
 const productRouter = ProductController(productRepository);
-const cartRouter = CartController(cartRepository, productRepository, validatePutCartBody);
+const cartRouter = CartController(cartRepository, productRepository);
 const orderRouter = OrderController(orderRepository, cartRepository);
 
 app.use(express.json());

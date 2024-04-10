@@ -14,7 +14,9 @@ const OrderController = (orderRepository: OrderBase, cartRepository: CartBase) :
       res
       .status(200)
       .send({
-        "data": JSON.stringify(order),
+        "data": {
+          order
+        },
         "error": null
       });
     } else {
