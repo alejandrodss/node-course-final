@@ -6,10 +6,10 @@ const admin = {
 }
 
 const product = {
-  id: 'superrandomuuidfortestproduct',
+  id: '707f8ff5-30a1-4bb5-89c8-9aa3ae8eac0a',
   title: 'Collectable Car',
   description: 'Toy car for adding to your collection',
-  price: '25.33'
+  price: 25.33
 }
 
 export default {

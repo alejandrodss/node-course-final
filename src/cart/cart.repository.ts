@@ -3,8 +3,8 @@ import { Cart, CartBase, CartItem, Product } from "../types";
 
 export class CartRepository implements CartBase {
   carts: Cart[];
-  constructor(){
-    this.carts = [];
+  constructor(carts: Cart[]){
+    this.carts = carts;
   }
 
   getCart(userId: string): Cart {
@@ -67,9 +67,11 @@ export class CartRepository implements CartBase {
   }
 
   deleteCart(userId: string): void {
+    console.log(this.carts);
     const cart = this.carts.find((cart) => (cart.userId === userId && !cart.isDeleted));
     if(cart !== undefined) {
       cart.isDeleted = true;
+      return;
     }
     throw new Error("Cart not found");
   }

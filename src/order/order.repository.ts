@@ -4,8 +4,8 @@ import { calculateTotal } from "../utils/utils";
 
 export class OrderRepostiory implements OrderBase {
   orders: Order[];
-  constructor() {
-    this.orders = [];
+  constructor(orders: Order[]) {
+    this.orders = orders;
   }
 
   createOrder(order: PostOrder): Order {

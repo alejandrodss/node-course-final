@@ -1,8 +1,8 @@
-import express, { Express, Router } from 'express';
+import express, { Express, Handler, Router } from 'express';
 import { CartBase, ProductBase, UpdateCartRequestBody } from '../types';
 import { CartService } from './cart.service';
 
-const CartController = (cartRepository: CartBase, productRepository: ProductBase) : Router => {
+const CartController = (cartRepository: CartBase, productRepository: ProductBase, middleware: Handler) : Router => {
   const cartRouter: Router = express.Router();
   const cartService: CartService = new CartService(cartRepository);
 
@@ -17,8 +17,8 @@ const CartController = (cartRepository: CartBase, productRepository: ProductBase
       });
   });
 
-  cartRouter.put('/cart', (req, res, next) => {
-    const { productId, count} = req.body() as UpdateCartRequestBody;
+  cartRouter.put('/cart', middleware ,(req, res, next) => {
+    const { productId, count } = req.body as UpdateCartRequestBody;
     const userId = req.get('x-user-id') as string;
     try {
       const availableProducts = productRepository.listProducts();
@@ -26,23 +26,33 @@ const CartController = (cartRepository: CartBase, productRepository: ProductBase
       res
         .status(200)
         .send({
-          "data": JSON.stringify(cart),
+          "data": cart,
           "error": null
         });
     } catch (error) {
-      console.log(error);
-      res
-        .status(404)
-        .send({
-          "data": null,
-          "error": {
-            "message": "No product with such id"
-          }
-        });
+      if ((error as Error).message === 'Cart not found') {
+        res
+          .status(404)
+          .send({
+            "data": null,
+            "error": {
+              "message": "Cart was not found"
+            }
+          })
+      } else {
+        res
+          .status(400)
+          .send({
+            "data": null,
+            "error": {
+              "message": "Products are not valid"
+            }
+          });
+      }
     }
   });
 
-  cartRouter.delete('/api/profile/cart', (req, res, next) => {
+  cartRouter.delete('/cart', (req, res, next) => {
     const userId = req.get('x-user-id') as string;
     try {
       cartService.deleteUserCart(userId);

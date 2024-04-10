@@ -23,7 +23,7 @@ const ProductController = (productRepository: ProductBase) : Router => {
       res
       .status(200)
       .send({
-        "data": JSON.stringify(product),
+        "data": product,
         "error": null
       });
     } catch (error) {
