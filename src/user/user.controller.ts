@@ -1,10 +1,8 @@
-import express, { Express, Router } from 'express';
-import { UserBase } from '../types';
+import express, { Router } from 'express';
 import { UserService } from './user.service';
 
-const UserController = (userRepository: UserBase) : Router => {
+const UserController = (userService: UserService) : Router => {
   const usersRouter: Router = express.Router();
-  const userService: UserService = new UserService(userRepository);
 
   usersRouter.get('/:userId', (req, res, next) => {
     const userId = req.params.userId;

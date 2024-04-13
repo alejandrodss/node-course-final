@@ -1,10 +1,8 @@
-import express, { Express, Router } from 'express';
-import { ProductBase } from '../types';
+import express, { Router } from 'express';
 import { ProductService } from './product.service';
 
-const ProductController = (productRepository: ProductBase) : Router => {
+const ProductController = (productService: ProductService) : Router => {
   const productRouter: Router = express.Router();
-  const productService: ProductService = new ProductService(productRepository);
 
   productRouter.get('', (req, res, next) => {
     const products = productService.getProducts();

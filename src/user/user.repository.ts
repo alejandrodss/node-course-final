@@ -1,12 +1,12 @@
 import { randomUUID } from "crypto";
-import { UserBase, User, PostUser } from "../types";
+import { UserBase, User, PostUser, DatabaseEntities } from "../types";
 
 export class UserRepository implements UserBase {
   users: User[];
   constructor(
-    public initialUsers: User[]
+    public database : DatabaseEntities
   ) {
-    this.users = initialUsers;
+    this.users = database.users;
   }
 
   getUser(id: string): User {

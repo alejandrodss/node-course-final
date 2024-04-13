@@ -98,3 +98,10 @@ export interface OrderBase {
   updateOrder(id: string, attrs: any[]);
   listOrders(): Order[];
 }
+
+export type DatabaseEntities = {
+  users: User[]
+  products: Product[]
+  carts: Cart[]
+  orders: Order []
+};

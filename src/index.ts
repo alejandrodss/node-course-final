@@ -12,11 +12,15 @@ import { CartRepository } from './cart/cart.repository';
 import { OrderRepostiory } from './order/order.repository';
 
 import { UserService } from './user/user.service';
+import { DatabaseEntities } from './types';
+import { ProductService } from './product/product.service';
+import { CartService } from './cart/cart.service';
+import { OrderService } from './order/order.service';
 
 const app = express();
 
 // Data init
-const database = {
+const database : DatabaseEntities = {
   users: Datasource.users,
   products: Datasource.products,
   orders: [],
@@ -24,13 +28,19 @@ const database = {
 }
 
 // Repositories init
-const userRepository = new UserRepository(database.users);
-const productRepository = new ProductRepository(database.products);
-const cartRepository = new CartRepository(database.carts);
-const orderRepository = new OrderRepostiory(database.orders);
+const userRepository = new UserRepository(database);
+const productRepository = new ProductRepository(database);
+const cartRepository = new CartRepository(database);
+const orderRepository = new OrderRepostiory(database);
+
+// Services init
+
+const userService = new UserService(userRepository);
+const productService = new ProductService(productRepository);
+const cartService = new CartService(cartRepository);
+const orderService = new OrderService(orderRepository);
 
 //Middlewares
-const userService = new UserService(userRepository);
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.get('x-user-id');
   if(userId == undefined) {
@@ -58,10 +68,10 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 }
 
 // Routers
-const userRouter = UserController(userRepository);
-const productRouter = ProductController(productRepository);
-const cartRouter = CartController(cartRepository, productRepository);
-const orderRouter = OrderController(orderRepository, cartRepository);
+const userRouter = UserController(userService);
+const productRouter = ProductController(productService);
+const cartRouter = CartController(cartService, productService);
+const orderRouter = OrderController(orderService, cartService);
 
 app.use(express.json());
 app.use(authMiddleware);

@@ -1,11 +1,11 @@
 import { randomUUID } from "crypto";
-import { Order, OrderBase, PostOrder } from "../types";
+import { DatabaseEntities, Order, OrderBase, PostOrder } from "../types";
 import { calculateTotal } from "../utils/utils";
 
 export class OrderRepostiory implements OrderBase {
   orders: Order[];
-  constructor(orders: Order[]) {
-    this.orders = orders;
+  constructor(database: DatabaseEntities) {
+    this.orders = database.orders;
   }
 
   createOrder(order: PostOrder): Order {

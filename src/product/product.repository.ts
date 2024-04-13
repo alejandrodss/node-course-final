@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { PostProduct, Product, ProductBase } from "../types";
+import { DatabaseEntities, PostProduct, Product, ProductBase } from "../types";
 
 export class ProductRepository implements ProductBase {
   products: Product[];
   constructor(
-    public initialProducts: Product[]
+    public database: DatabaseEntities
   ) {
-    this.products = initialProducts;
+    this.products = database.products;
   }
 
   getProduct(id: string): Product {

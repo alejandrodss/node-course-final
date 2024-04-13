@@ -1,10 +1,10 @@
 import { randomUUID } from "crypto";
-import { Cart, CartBase, CartItem, Product } from "../types";
+import { Cart, CartBase, CartItem, DatabaseEntities, Product } from "../types";
 
 export class CartRepository implements CartBase {
   carts: Cart[];
-  constructor(carts: Cart[]){
-    this.carts = carts;
+  constructor(database: DatabaseEntities){
+    this.carts = database.carts;
   }
 
   getCart(userId: string): Cart {
@@ -48,7 +48,7 @@ export class CartRepository implements CartBase {
         if(count > 0) {
           const product = availableProducts.find((product) => product.id == productId);
           if (product !== undefined) {
-            const cartProduct : Product = {...product};
+            const cartProduct : Product = product;
             const newCartItem : CartItem = {
               product: cartProduct,
               count

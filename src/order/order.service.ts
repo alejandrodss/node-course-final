@@ -11,7 +11,7 @@ export class OrderService {
     const newOrder: PostOrder = {
       userId,
       cartId: cart.id,
-      items: cart.items,
+      items: [...cart.items],
       comments: '',
       status: 'created'
     }
