@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { UserBase, User, PostUser, DatabaseEntities } from "../types";
+import { IUser } from "../schemas/IUser";
 
 export class UserRepository implements UserBase {
   users: User[];

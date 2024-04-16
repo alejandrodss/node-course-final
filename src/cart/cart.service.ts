@@ -8,7 +8,7 @@ export class CartService {
   }
 
   getUserCart(userId: string) : Cart {
-    return this.cartRepository.getCart(userId);
+    return (this.cartRepository.getCart(userId) as Cart);
   }
 
   updateUserCart(
@@ -17,7 +17,7 @@ export class CartService {
     count: number,
     availableProducts: Product[]
   ) : Cart {
-    return this.cartRepository.updateCart(userId, productId, count, availableProducts);
+    return (this.cartRepository.updateCart(userId, productId, count, availableProducts) as Cart);
   }
 
   deleteUserCart(userId: string) {

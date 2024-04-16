@@ -1,3 +1,8 @@
+import { ICart } from "./schemas/ICart";
+import { IOrder } from "./schemas/IOrder";
+import { IProduct } from "./schemas/IProduct";
+import { IUser } from "./schemas/IUser";
+
 export type User = {
   email: string,
   password: string,
@@ -8,11 +13,11 @@ export type User = {
 export type PostUser = Omit<User, 'id'>;
 
 export interface UserBase {
-  users: User[];
-  getUser(id: string): User;
-  listUsers(): User[];
-  createUser(user: PostUser): void;
-  deleteUser(id: string): void;
+  users?: User[];
+  getUser(id: string): User | Promise<IUser | User>;
+  listUsers(): User[] | Promise;
+  createUser(user: PostUser): void | Promise;
+  deleteUser(id: string): void | Promise;
 }
 
 export type Product = {
@@ -25,11 +30,11 @@ export type Product = {
 export type PostProduct = Omit<Product, 'id'>;
 
 export interface ProductBase {
-  products: Product[];
-  getProduct(id: string): Product;
-  listProducts(): Product[];
-  createProduct(product: PostProduct): void;
-  deleteProduct(id: string): void;
+  products?: Product[];
+  getProduct(id: string): Product | Promise<IProduct | Product>;
+  listProducts(): Product[] | Promise<IProduct[] | Product[]>;
+  createProduct(product: PostProduct): void | Promise;
+  deleteProduct(id: string): void | Promise;
 }
 
 export type CartItem = {
@@ -50,21 +55,26 @@ export type UpdateCartRequestBody = {
 }
 
 export interface CartBase {
-  carts: Cart[];
-  getCart(userId: string): Cart;
-  listCarts(): Cart[];
-  createCart(userId: string): Cart;
-  updateCart(userId: string, productId: string, count: number, availableProducts: Product[]): Cart;
-  deleteCart(userId: string): void;
+  carts?: Cart[];
+  getCart(userId: string): Cart | Promise<ICart | Cart>;
+  listCarts(): Cart[] | Promise<ICart[] | Cart[]>;
+  createCart(userId: string): Cart | Promise<ICart | Cart>;
+  updateCart(
+    userId: string,
+    productId: string,
+    count: number,
+    availableProducts?: Product[]
+  ): Cart | Promise<ICart | Cart>;
+  deleteCart(userId: string): void | Promise<void>;
 }
 
-type Payment = {
+export type Payment = {
   type: string,
   address?: string,
   creditCard?: string
 };
 
-type Delivery = {
+export type Delivery = {
   type: string,
   address: string
 };
@@ -92,11 +102,11 @@ export type PostOrder = {
 };
 
 export interface OrderBase {
-  orders: Order[];
-  createOrder(order: PostOrder): Order;
-  getOrder(id: string): Order;
+  orders?: Order[];
+  createOrder(order: PostOrder): Order | Promise<IOrder | Order>;
+  getOrder(id: string): Order | Promise<IOrder | Order>;
   updateOrder(id: string, attrs: any[]);
-  listOrders(): Order[];
+  listOrders(): Order[] | Promise<IOrder[] | Order[]>;
 }
 
 export type DatabaseEntities = {

@@ -7,6 +7,6 @@ export class UserService {
   }
 
   getUser(id: string): User {
-    return this.userRepository.getUser(id);
+    return (this.userRepository.getUser(id) as User);
   }
 }

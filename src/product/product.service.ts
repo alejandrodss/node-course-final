@@ -8,10 +8,10 @@ export class ProductService {
   }
 
   getProducts() : Product[] {
-    return this.productRepository.listProducts();
+    return (this.productRepository.listProducts() as Product[]);
   }
 
   getProduct(productId: string) : Product {
-    return this.productRepository.getProduct(productId);
+    return (this.productRepository.getProduct(productId) as Product);
   }
 }

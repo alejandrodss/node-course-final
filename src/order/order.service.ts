@@ -15,11 +15,11 @@ export class OrderService {
       comments: '',
       status: 'created'
     }
-    return this.orderRepository.createOrder(newOrder);
+    return this.orderRepository.createOrder(newOrder) as Order;
   }
 
   checkoutOrder(orderId: string) {
-    const order = this.orderRepository.getOrder(orderId);
+    const order = this.orderRepository.getOrder(orderId) as Order;
     order.payment = {
       type: 'Any',
       address: 'Any city',
