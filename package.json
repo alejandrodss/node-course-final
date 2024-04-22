@@ -1,0 +1,26 @@
+{
+  "name": "node-course-final-project",
+  "version": "0.0.1",
+  "description": "Node mentoring program",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "./node_modules/.bin/pm2 start ./build/index.js --name nmp-project",
+    "stop": "./node_modules/.bin/pm2 stop nmp-project",
+    "start-dev": "nodemon index.js",
+    "build": "tsc"
+  },
+  "author": "J Alejandro Duarte S",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.30",
+    "nodemon": "^3.1.0",
+    "pm2": "^5.3.1",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "joi": "^17.12.3"
+  }
+}
