@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { IProduct } from './IProduct';
+import { Product } from '../types';
 
 export interface ICartItemEntity {
-  product: IProduct;
+  product: IProduct | Product;
   count: number;
 }
 

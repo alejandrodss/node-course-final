@@ -8,7 +8,8 @@
     "start": "./node_modules/.bin/pm2 start ./build/index.js --name nmp-project",
     "stop": "./node_modules/.bin/pm2 stop nmp-project",
     "start-dev": "nodemon index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "populate-db": "node ./build/DatasourceMongo.js"
   },
   "author": "J Alejandro Duarte S",
   "license": "MIT",

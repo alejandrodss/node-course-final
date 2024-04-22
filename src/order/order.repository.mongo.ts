@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import MongoOrder, { IOrder } from "../schemas/IOrder";
 import { Order, OrderBase, PostOrder } from "../types";
 import { calculateTotal } from "../utils/utils";
+import { DatabaseError } from "../exceptions/DatabaseError";
 
 export class OrderRepostiory implements OrderBase {
   async createOrder(order: PostOrder): Promise<Order | IOrder> {
@@ -13,10 +14,10 @@ export class OrderRepostiory implements OrderBase {
         total
       });
       const savedOrder = await newOrder.save();
-      console.log("User created: ", savedOrder);
+      console.log("Order created: ", savedOrder);
       return savedOrder;
     } catch (err) {
-      throw new Error("Error when creating new order");
+      throw new DatabaseError("Error when creating new order");
     }
   }
 

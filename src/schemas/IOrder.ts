@@ -26,4 +26,4 @@ const OrderSchema: Schema = new Schema({
   total: { type: Number, required: true}
 });
 
-export default mongoose.model<IOrder>('Cart', OrderSchema);
+export default mongoose.model<IOrder>('Order', OrderSchema);

@@ -6,18 +6,28 @@ import ProductController from './product/product.controller';
 import CartController from './cart/cart.controller';
 import OrderController from './order/order.controller';
 
-import { UserRepository } from './user/user.repository';
-import { ProductRepository } from './product/product.repository';
-import { CartRepository } from './cart/cart.repository';
-import { OrderRepostiory } from './order/order.repository';
+import { UserRepository } from './user/user.repository.mongo';
+import { ProductRepository } from './product/product.repository.mongo';
+import { CartRepository } from './cart/cart.repository.mongo';
+import { OrderRepostiory } from './order/order.repository.mongo';
 
 import { UserService } from './user/user.service';
 import { DatabaseEntities } from './types';
 import { ProductService } from './product/product.service';
 import { CartService } from './cart/cart.service';
 import { OrderService } from './order/order.service';
+import mongoose from "mongoose";
+
+const uri: string = 'mongodb://root:nodegmp@localhost:27017';
 
 const app = express();
+
+mongoose.connect(uri).then((con) => {
+  con.connection.useDb("node-course");
+  console.log("Successfully connected to MongoDB");
+}).catch((error: Error) => {
+  console.log(`Error connecting to MongoDB: ${error.message}`);
+});
 
 // Data init
 const database : DatabaseEntities = {
@@ -28,10 +38,10 @@ const database : DatabaseEntities = {
 }
 
 // Repositories init
-const userRepository = new UserRepository(database);
-const productRepository = new ProductRepository(database);
-const cartRepository = new CartRepository(database);
-const orderRepository = new OrderRepostiory(database);
+const userRepository = new UserRepository();
+const productRepository = new ProductRepository();
+const cartRepository = new CartRepository();
+const orderRepository = new OrderRepostiory();
 
 // Services init
 
@@ -41,7 +51,7 @@ const cartService = new CartService(cartRepository);
 const orderService = new OrderService(orderRepository);
 
 //Middlewares
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.get('x-user-id');
   if(userId == undefined) {
     //	Forbidden(when authorization header is missing)
@@ -53,8 +63,8 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     });
   } else {
     try {
-      userService.getUser(userId);
-      next()
+      await userService.getUser(userId);
+      next();
     } catch {
       // 	Unauthorized(when no user matching authorization header is found)
       res.status(401).send({

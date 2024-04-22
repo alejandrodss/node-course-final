@@ -8,6 +8,7 @@ npm test -> No implemeted yet
 npm run start -> it will start the server using pm2
 npm run stop  -> will stop the server
 npm run build -> it will compile .ts files into .js for node server usage
+npm run populate-db -> run the script to populate db with initial values. Before run this task make sure you build the project first.
 
 How to run the project
 Set up the project by running npm install

@@ -1,4 +1,4 @@
-import { ICart } from "./schemas/ICart";
+import { ICart, ICartItemEntity } from "./schemas/ICart";
 import { IOrder } from "./schemas/IOrder";
 import { IProduct } from "./schemas/IProduct";
 import { IUser } from "./schemas/IUser";
@@ -15,9 +15,9 @@ export type PostUser = Omit<User, 'id'>;
 export interface UserBase {
   users?: User[];
   getUser(id: string): User | Promise<IUser | User>;
-  listUsers(): User[] | Promise;
-  createUser(user: PostUser): void | Promise;
-  deleteUser(id: string): void | Promise;
+  listUsers(): User[] | Promise<User[] | IUser[]>;
+  createUser(user: PostUser): void | Promise<void>;
+  deleteUser(id: string): void | Promise<void>;
 }
 
 export type Product = {
@@ -33,8 +33,8 @@ export interface ProductBase {
   products?: Product[];
   getProduct(id: string): Product | Promise<IProduct | Product>;
   listProducts(): Product[] | Promise<IProduct[] | Product[]>;
-  createProduct(product: PostProduct): void | Promise;
-  deleteProduct(id: string): void | Promise;
+  createProduct(product: PostProduct): void | Promise<void>;
+  deleteProduct(id: string): void | Promise<void>;
 }
 
 export type CartItem = {
@@ -60,10 +60,8 @@ export interface CartBase {
   listCarts(): Cart[] | Promise<ICart[] | Cart[]>;
   createCart(userId: string): Cart | Promise<ICart | Cart>;
   updateCart(
-    userId: string,
-    productId: string,
-    count: number,
-    availableProducts?: Product[]
+    cart: Cart | ICart,
+    items: CartItem[] | ICartItemEntity[]
   ): Cart | Promise<ICart | Cart>;
   deleteCart(userId: string): void | Promise<void>;
 }

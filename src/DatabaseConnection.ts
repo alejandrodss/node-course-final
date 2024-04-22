@@ -1,11 +1,19 @@
 import mongoose from "mongoose";
 
-const uri: string = 'mongodb://root:nodegmp@localhost:27017/node-course';
+const uri: string = 'mongodb://root:nodegmp@127.0.0.1:27017/';
 
-const options : mongoose.ConnectOptions = { };
+const options: mongoose.ConnectOptions = { directConnection: true };
 
-mongoose.connect(uri, options).then((con) => {
-  console.log("Successfully connected to MongoDB");
+try {
+    const connnection = mongoose.createConnection(uri);
+    console.log("Successfully connected to MongoDB");
+    const dbConnection = connnection.useDb('node-course');
+    const collection = dbConnection.collection('users')
+    collection.find();
+  } catch (error) {
+    console.log(`Error connecting to MongoDB: ${error}`);
+  }
+
+/*mongoose.connect(uri, options).then((con) => {
 }).catch((error: Error) => {
-  console.log(`Error connecting to MongoDB: ${error.message}`);
-})
+}); */

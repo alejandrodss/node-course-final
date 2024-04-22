@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import MongoCart, { ICart, ICartItemEntity } from "../schemas/ICart";
-import MongoProduct, { IProduct } from '../schemas/IProduct';
-import { Cart, CartBase, Product } from "../types";
+import { Cart, CartBase, CartItem, Product } from "../types";
+import { CartNotFoundError } from "../exceptions/CartNotFoundError";
+import { DatabaseError } from "../exceptions/DatabaseError";
 
 export class CartRepository implements CartBase {
   async getCart(userId: string): Promise<Cart | ICart> {
@@ -9,11 +10,13 @@ export class CartRepository implements CartBase {
       const cart = await MongoCart.findOne({ userId, isDeleted: false }).exec();
       if (cart) {
         return cart;
-      } else {
-        return await this.createCart(userId);
       }
-    } catch (err) {
-      throw new Error(`There was an error fetching cart for user with id ${userId}`);
+      throw new CartNotFoundError();
+    } catch (err: any) {
+      if (err.name === "CartNotFound") {
+        throw err;
+      }
+      throw new DatabaseError(`There was an error fetching cart for user with id ${userId}`);
     }
   }
 
@@ -29,49 +32,20 @@ export class CartRepository implements CartBase {
         isDeleted: false,
         items: []
       });
-
       const savedCart = await newCart.save();
       return savedCart;
     } catch (err) {
-      throw new Error(`There was an error creating the cart ${err}`);
+      throw new DatabaseError(`There was an error creating the cart ${err}`);
     }
   }
 
-  async updateCart(userId: string, productId: string, count: number): Promise<Cart | ICart> {
-    const cart = await MongoCart.findOne({userId, isDeleted: false}).exec();
-    if (cart) {
-      const items = cart.items;
-      const cartItemIndex = items.findIndex((cartItem) => (cartItem.product.id === productId));
-      const cartItem: ICartItemEntity = items[cartItemIndex];
-      if (cartItem !== undefined) {
-        if (count > 0) {
-          cartItem.count = count;
-        } else {
-          items.splice(cartItemIndex, 1);
-        }
-        await cart.updateOne({items: items});
-      } else {
-        if (count > 0) {
-          const product = await MongoProduct.findOne({id: productId}).exec();
-          if (product) {
-            const cartProduct: IProduct = product;
-            const newCartItem: ICartItemEntity = {
-              product: cartProduct,
-              count
-            };
-            const items = cart.items;
-            items.push(newCartItem);
-            await cart.updateOne({items});
-          } else {
-            throw new Error("Products are not valid");
-          }
-        } else {
-          throw new Error("Products are not valid");
-        }
-      }
+  async updateCart(cart: ICart, items: ICartItemEntity[]): Promise<Cart | ICart> {
+    try {
+      await cart.updateOne({items: items}).lean();
       return cart;
+    } catch(err) {
+      throw new DatabaseError(`There was an error updating the cart ${err}`);
     }
-    throw new Error("Cart not found");
   }
   async deleteCart(userId: string): Promise<void> {
     const cart = await MongoCart.findOne({userId, isDeleted: false}).exec();
@@ -79,6 +53,6 @@ export class CartRepository implements CartBase {
       await cart.updateOne({isDeleted: true});
       return;
     }
-    throw new Error("Cart not found");
+    throw new CartNotFoundError();
   }
 }

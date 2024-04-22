@@ -5,6 +5,8 @@ import { PostUser, User, UserBase } from '../types';
 export class UserRepository implements UserBase {
   async getUser(id: string): Promise<IUser | User> {
     try {
+      MongoUser.db.useDb("node-course");
+      MongoUser.countDocuments().then((res) => console.log(res));
       const user = await MongoUser.findOne({ id: id }).exec();
       console.log("User found: ", user);
       if(user !== null) {
