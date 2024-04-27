@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import 'dotenv/config'
 
-const uri: string = 'mongodb://root:nodegmp@127.0.0.1:27017/';
+const uri: string = `mongodb://${process.env.MONGODB_INITDB_ROOT_USERNAME}:${process.env.MONGODB_INITDB_ROOT_PASSWORD}@localhost:27017`;
+
 
 const options: mongoose.ConnectOptions = { directConnection: true };
 

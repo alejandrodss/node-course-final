@@ -5,7 +5,7 @@ import { productJsonResponse } from '../utils/utils';
 const ProductController = (productService: ProductService) : Router => {
   const productRouter: Router = express.Router();
 
-  productRouter.get('', async (req, res, next) => {
+  productRouter.get('/', async (req, res, next) => {
     const products = await productService.getProducts();
     res
     .status(200)

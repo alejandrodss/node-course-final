@@ -6,7 +6,7 @@ import { calculateTotal, itemsJsonResponse } from '../utils/utils';
 import { ProductService } from '../product/product.service';
 import { BaseError } from '../exceptions/BaseError';
 
-const CartController = (cartService: CartService, productService: ProductService) : Router => {
+const CartController = (cartService: CartService) : Router => {
   const cartRouter: Router = express.Router();
 
   const putCartSchema = Joi.object({
@@ -66,7 +66,7 @@ const CartController = (cartService: CartService, productService: ProductService
     const { productId, count } = req.body as UpdateCartRequestBody;
     const userId = req.get('x-user-id') as string;
     try {
-      const cart = await cartService.updateUserCart(userId, productId, count, productService);
+      const cart = await cartService.updateUserCart(userId, productId, count);
       res
         .status(200)
         .send(cartJsonResponse(cart));

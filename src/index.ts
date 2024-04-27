@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction} from 'express';
+import 'dotenv/config';
 
 import Datasource from './Datasource';
 import UserController from './user/user.controller';
@@ -18,7 +19,7 @@ import { CartService } from './cart/cart.service';
 import { OrderService } from './order/order.service';
 import mongoose from "mongoose";
 
-const uri: string = 'mongodb://root:nodegmp@localhost:27017';
+const uri: string = `mongodb://${process.env.MONGODB_INITDB_ROOT_USERNAME}:${process.env.MONGODB_INITDB_ROOT_PASSWORD}@localhost:27017`;
 
 const app = express();
 
@@ -47,7 +48,7 @@ const orderRepository = new OrderRepostiory();
 
 const userService = new UserService(userRepository);
 const productService = new ProductService(productRepository);
-const cartService = new CartService(cartRepository);
+const cartService = new CartService(cartRepository, productService);
 const orderService = new OrderService(orderRepository);
 
 //Middlewares
@@ -80,7 +81,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 // Routers
 const userRouter = UserController(userService);
 const productRouter = ProductController(productService);
-const cartRouter = CartController(cartService, productService);
+const cartRouter = CartController(cartService);
 const orderRouter = OrderController(orderService, cartService);
 
 app.use(express.json());

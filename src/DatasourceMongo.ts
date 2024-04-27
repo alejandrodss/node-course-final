@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+import 'dotenv/config'
 import MongoUser from './schemas/IUser';
 import { ProductRepository } from "./product/product.repository.mongo";
 
-const uri: string = 'mongodb://root:nodegmp@localhost:27017';
+const uri: string = `mongodb://${process.env.MONGODB_INITDB_ROOT_USERNAME}:${process.env.MONGODB_INITDB_ROOT_PASSWORD}@localhost:27017`;
+
 
 mongoose.connect(uri).then(async(con) => {
   con.connection.useDb("node-course");

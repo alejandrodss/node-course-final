@@ -7,9 +7,11 @@ import { Cart, CartBase, CartItem, Product } from "../types";
 
 export class CartService {
   cartRepository : CartBase;
+  productService : ProductService;
 
-  constructor(cartRepository: CartBase) {
+  constructor(cartRepository: CartBase, productService: ProductService) {
     this.cartRepository = cartRepository;
+    this.productService = productService;
   }
 
   async getUserCart(userId: string): Promise<ICart | Cart> {
@@ -39,7 +41,6 @@ export class CartService {
     userId: string,
     productId: string,
     count: number,
-    productService: ProductService
   ) : Promise<Cart | ICart> {
     try {
       const cart = await this.cartRepository.getCart(userId);
@@ -56,7 +57,7 @@ export class CartService {
         return await this.cartRepository.updateCart(cart, items);
       } else { // The item is not in the cart yet
         if (count > 0) {
-          const cartProduct: IProduct | Product = await productService.getProduct(productId);
+          const cartProduct: IProduct | Product = await this.productService.getProduct(productId);
           const newCartItem: ICartItemEntity = {
             product: cartProduct,
             count

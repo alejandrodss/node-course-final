@@ -13,7 +13,7 @@ export class CartRepository implements CartBase {
       }
       throw new CartNotFoundError();
     } catch (err: any) {
-      if (err.name === "CartNotFound") {
+      if (err instanceof CartNotFoundError) {
         throw err;
       }
       throw new DatabaseError(`There was an error fetching cart for user with id ${userId}`);
@@ -32,8 +32,7 @@ export class CartRepository implements CartBase {
         isDeleted: false,
         items: []
       });
-      const savedCart = await newCart.save();
-      return savedCart;
+      return newCart.save();
     } catch (err) {
       throw new DatabaseError(`There was an error creating the cart ${err}`);
     }
@@ -48,9 +47,8 @@ export class CartRepository implements CartBase {
     }
   }
   async deleteCart(userId: string): Promise<void> {
-    const cart = await MongoCart.findOne({userId, isDeleted: false}).exec();
-    if (cart) {
-      await cart.updateOne({isDeleted: true});
+    const result = await MongoCart.updateOne({userId, isDeleted: false}, {isDeleted: true}).exec();
+    if (result.modifiedCount > 0) {
       return;
     }
     throw new CartNotFoundError();
