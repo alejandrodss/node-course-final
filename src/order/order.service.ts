@@ -1,3 +1,4 @@
+import { IOrder } from "../schemas/IOrder";
 import { Cart, Order, OrderBase, PostOrder } from "../types";
 
 export class OrderService {
@@ -7,7 +8,7 @@ export class OrderService {
     this.orderRepository = orderRepository;
   }
 
-  createOrder(userId: string, cart: Cart) : Order {
+  async createOrder(userId: string, cart: Cart) : Promise<Order | IOrder> {
     const newOrder: PostOrder = {
       userId,
       cartId: cart.id,
@@ -15,11 +16,11 @@ export class OrderService {
       comments: '',
       status: 'created'
     }
-    return this.orderRepository.createOrder(newOrder);
+    return (await this.orderRepository.createOrder(newOrder));
   }
 
-  checkoutOrder(orderId: string) {
-    const order = this.orderRepository.getOrder(orderId);
+  async checkoutOrder(orderId: string) {
+    const order = await this.orderRepository.getOrder(orderId) as Order;
     order.payment = {
       type: 'Any',
       address: 'Any city',

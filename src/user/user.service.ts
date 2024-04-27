@@ -1,3 +1,4 @@
+import {IUser} from "../schemas/IUser";
 import { UserBase, User } from "../types";
 
 export class UserService {
@@ -6,7 +7,7 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  getUser(id: string): User {
-    return this.userRepository.getUser(id);
+  async getUser(id: string): Promise<IUser | User> {
+    return (await this.userRepository.getUser(id));
   }
 }

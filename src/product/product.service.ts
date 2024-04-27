@@ -1,3 +1,4 @@
+import { IProduct } from "../schemas/IProduct";
 import { Product, ProductBase } from "../types";
 
 export class ProductService {
@@ -7,11 +8,11 @@ export class ProductService {
     this.productRepository = productRepository;
   }
 
-  getProducts() : Product[] {
-    return this.productRepository.listProducts();
+  async getProducts() : Promise<Product[] | IProduct[]> {
+    return (await this.productRepository.listProducts());
   }
 
-  getProduct(productId: string) : Product {
-    return this.productRepository.getProduct(productId);
+  async getProduct(productId: string) : Promise<Product | IProduct> {
+    return (await this.productRepository.getProduct(productId));
   }
 }

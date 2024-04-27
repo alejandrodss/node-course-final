@@ -2,10 +2,11 @@ import express, { Router, NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 import { Cart, UpdateCartRequestBody } from '../types';
 import { CartService } from './cart.service';
-import { calculateTotal } from '../utils/utils';
+import { calculateTotal, itemsJsonResponse } from '../utils/utils';
 import { ProductService } from '../product/product.service';
+import { BaseError } from '../exceptions/BaseError';
 
-const CartController = (cartService: CartService, productService: ProductService) : Router => {
+const CartController = (cartService: CartService) : Router => {
   const cartRouter: Router = express.Router();
 
   const putCartSchema = Joi.object({
@@ -34,7 +35,7 @@ const CartController = (cartService: CartService, productService: ProductService
       "data": {
         "cart": {
           "id": cart.id,
-          "items": cart.items
+          "items": itemsJsonResponse(cart.items)
         },
         "total": calculateTotal(cart.items)
       },
@@ -42,25 +43,36 @@ const CartController = (cartService: CartService, productService: ProductService
     });
   };
 
-  cartRouter.get('/cart', (req, res, next) => {
+  cartRouter.get('/cart', async (req, res, next) => {
     const userId = req.get('x-user-id');
-    const cart = cartService.getUserCart(userId as string);
-    res
-      .status(200)
-      .send(cartJsonResponse(cart));
+    try  {
+      const cart = await cartService.getOrCreateUserCart(userId as string);
+      res
+        .status(200)
+        .send(cartJsonResponse(cart));
+    } catch(err) {
+      res
+        .status((err as BaseError).status)
+        .send({
+          "data": null,
+          "error": {
+            "message": (err as BaseError).message
+          }
+        })
+    }
   });
 
-  cartRouter.put('/cart', validatePutCartBody ,(req, res, next) => {
+  cartRouter.put('/cart', validatePutCartBody ,async (req, res, next) => {
     const { productId, count } = req.body as UpdateCartRequestBody;
     const userId = req.get('x-user-id') as string;
     try {
-      const availableProducts = productService.getProducts();
-      const cart = cartService.updateUserCart(userId, productId, count, availableProducts);
+      const cart = await cartService.updateUserCart(userId, productId, count);
       res
         .status(200)
         .send(cartJsonResponse(cart));
     } catch (error) {
-      if ((error as Error).message === 'Cart not found') {
+      console.log(error);
+      if ((error as Error).name === 'CartNotFound') {
         res
           .status(404)
           .send({
@@ -69,7 +81,7 @@ const CartController = (cartService: CartService, productService: ProductService
               "message": "Cart was not found"
             }
           })
-      } else {
+      } else if ((error as Error).name === 'ProductNotValid'){
         res
           .status(400)
           .send({
@@ -78,14 +90,23 @@ const CartController = (cartService: CartService, productService: ProductService
               "message": "Products are not valid"
             }
           });
+      } else {
+        res
+          .status(500)
+          .send({
+            "data": null,
+            "error": {
+              "message": "Internal Server error"
+            }
+          });
       }
     }
   });
 
-  cartRouter.delete('/cart', (req, res, next) => {
+  cartRouter.delete('/cart', async (req, res, next) => {
     const userId = req.get('x-user-id') as string;
     try {
-      cartService.deleteUserCart(userId);
+      await cartService.deleteUserCart(userId);
       res
         .status(200)
         .send({
