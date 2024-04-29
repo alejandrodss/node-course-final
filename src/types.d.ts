@@ -77,7 +77,7 @@ export type Delivery = {
   address: string
 };
 
-type ORDER_STATUS = 'created' | 'completed';
+export type ORDER_STATUS = 'created' | 'completed';
 
 export type Order = {
   id: string,
