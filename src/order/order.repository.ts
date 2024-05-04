@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { DatabaseEntities, Order, OrderBase, PostOrder } from "../types";
+import { CartItem, DatabaseEntities, Order, OrderBase, PostOrder } from "../types";
 import { calculateTotal } from "../utils/utils";
 
 export class OrderRepostiory implements OrderBase {
@@ -9,7 +9,7 @@ export class OrderRepostiory implements OrderBase {
   }
 
   createOrder(order: PostOrder): Order {
-    const total = calculateTotal(order.items);
+    const total = calculateTotal(order.items as CartItem[]);
     const newOrder : Order = {
       ...order,
       id: randomUUID(),

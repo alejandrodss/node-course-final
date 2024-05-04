@@ -1,5 +1,7 @@
 import { IOrder } from "../schemas/IOrder";
 import { Cart, Order, OrderBase, PostOrder } from "../types";
+import { Cart as CartEntity } from "../entities/cart";
+import { Order as OrderEntity } from "../entities/order";
 
 export class OrderService {
   orderRepository : OrderBase;
@@ -8,11 +10,12 @@ export class OrderService {
     this.orderRepository = orderRepository;
   }
 
-  async createOrder(userId: string, cart: Cart) : Promise<Order | IOrder> {
+  async createOrder(userId: string, cart: Cart | CartEntity) : Promise<Order | IOrder | OrderEntity> {
+    const items = (cart instanceof CartEntity) ? cart.items.getItems() : cart.items;
     const newOrder: PostOrder = {
       userId,
       cartId: cart.id,
-      items: [...cart.items],
+      items: items,
       comments: '',
       status: 'created'
     }

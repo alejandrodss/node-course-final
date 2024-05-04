@@ -13,7 +13,6 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "'84e8ec52-c672-4a7e-ad47-9411cec6873f'",
           "mappedType": "uuid"
         },
         "title": {
@@ -36,12 +35,14 @@
         },
         "price": {
           "name": "price",
-          "type": "int",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         }
       },
       "name": "product",
@@ -71,11 +72,10 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "'8f78fb72-2521-4149-aac5-bc44962c66db'",
           "mappedType": "uuid"
         },
-        "name": {
-          "name": "name",
+        "password": {
+          "name": "password",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -129,7 +129,6 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "'e78826e5-f88f-4aba-914c-0d81d6089aae'",
           "mappedType": "uuid"
         },
         "user_id": {
@@ -327,7 +326,6 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "'5eec9c52-b4b5-4581-b8ce-de63c91139f6'",
           "mappedType": "uuid"
         },
         "user_id": {

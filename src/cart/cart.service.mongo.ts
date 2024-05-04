@@ -5,7 +5,6 @@ import { ICart, ICartItemEntity } from "../schemas/ICart";
 import { IProduct } from "../schemas/IProduct";
 import { Cart, CartBase, CartItem, Product } from "../types";
 import { Cart as CartEntity } from "../entities/cart";
-import { CartItem as CartItemEntity } from "../entities/cartItem";
 
 export class CartService {
   cartRepository : CartBase;
@@ -45,11 +44,11 @@ export class CartService {
     count: number,
   ) : Promise<Cart | ICart | CartEntity> {
     try {
-      const cart = await this.cartRepository.getCart(userId) as CartEntity;
+      const cart = await this.cartRepository.getCart(userId);
       console.log("getting a cart", cart);
-      const items = cart.items.getItems();
+      const items = (cart.items as ICartItemEntity[]);
       const cartItemIndex = items.findIndex((cartItem) => (cartItem.product.id === productId));
-      const cartItem: ICartItemEntity | CartItem | CartItemEntity = items[cartItemIndex];
+      const cartItem: ICartItemEntity | CartItem = items[cartItemIndex];
       if (cartItem !== undefined) {
         if (count > 0) {
           cartItem.count = count;
@@ -60,12 +59,11 @@ export class CartService {
       } else { // The item is not in the cart yet
         if (count > 0) {
           const cartProduct: IProduct | Product = await this.productService.getProduct(productId);
-          const newCartItem: CartItemEntity = new CartItemEntity({
-            productId: cartProduct.id,
-            cartId: cart.id,
+          const newCartItem: ICartItemEntity = {
+            product: cartProduct,
             count
-          });
-          const items = cart.items.getItems();
+          };
+          const items = (cart.items as ICartItemEntity[]);
           items.push(newCartItem);
           return await this.cartRepository.updateCart(cart, items);
         } else {

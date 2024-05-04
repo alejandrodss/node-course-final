@@ -18,7 +18,7 @@ type Delivery = {
 
 @Entity()
 export class Order {
-  @PrimaryKey({type: 'uuid', default: randomUUID()})
+  @PrimaryKey({type: 'uuid'})
   id!: string;
 
   @ManyToOne(() => User, { nullable: false, ref: true })
@@ -27,7 +27,7 @@ export class Order {
   @Property()
   cartId: string;
 
-  @OneToMany(() => OrderItem, 'order' ,{orphanRemoval: true})
+  @OneToMany(() => OrderItem, item => item.order ,{orphanRemoval: true})
   items: Collection<OrderItem> = new Collection<OrderItem>(this);
 
   @Property({nullable: true})
@@ -46,6 +46,7 @@ export class Order {
   total: number
 
   constructor(userId: string, cartId: string, total: number) {
+    this.id = randomUUID();
     this.user = Reference.createFromPK(User, userId);
     this.cartId = cartId;
     this.total = total;

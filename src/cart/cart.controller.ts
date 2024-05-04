@@ -1,10 +1,12 @@
 import express, { Router, NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { Cart, UpdateCartRequestBody } from '../types';
+import { Cart, CartItem, UpdateCartRequestBody } from '../types';
 import { CartService } from './cart.service';
-import { calculateTotal, itemsJsonResponse } from '../utils/utils';
+import { calculateTotal, calculateTotalSql, itemsJsonResponse } from '../utils/utils';
 import { ProductService } from '../product/product.service';
 import { BaseError } from '../exceptions/BaseError';
+import { Cart as CartEntity} from '../entities/cart';
+import { CartItem as CartItemEntity} from '../entities/cartItem';
 
 const CartController = (cartService: CartService) : Router => {
   const cartRouter: Router = express.Router();
@@ -30,14 +32,20 @@ const CartController = (cartService: CartService) : Router => {
     }
   };
 
-  const cartJsonResponse = (cart : Cart) : object => {
+  const cartJsonResponse = (cart : Cart | CartEntity) : object => {
+    const items = (cart instanceof CartEntity) ? 
+      cart.items.getItems() :
+      cart.items;
+    const total = (cart instanceof CartEntity) ?
+      calculateTotalSql(items as CartItemEntity[]) :
+      calculateTotal(items as CartItem[]);
     return ({
       "data": {
         "cart": {
           "id": cart.id,
-          "items": itemsJsonResponse(cart.items)
+          "items": itemsJsonResponse(items)
         },
-        "total": calculateTotal(cart.items)
+        "total": total
       },
       "error": null
     });
@@ -46,7 +54,7 @@ const CartController = (cartService: CartService) : Router => {
   cartRouter.get('/cart', async (req, res, next) => {
     const userId = req.get('x-user-id');
     try  {
-      const cart = await cartService.getOrCreateUserCart(userId as string);
+      const cart = await cartService.getOrCreateUserCart(userId as string) as CartEntity;
       res
         .status(200)
         .send(cartJsonResponse(cart));

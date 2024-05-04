@@ -3,8 +3,8 @@ import { randomUUID } from "crypto";
 
 @Entity()
 export class Product {
-  @PrimaryKey({ type: 'uuid', default: randomUUID() })
-  id!: string;
+  @PrimaryKey({ type: 'uuid' })
+  id: string;
 
   @Property()
   title!: string;
@@ -12,6 +12,13 @@ export class Product {
   @Property()
   description!: string;
 
-  @Property()
+  @Property({ columnType: 'float'})
   price!: number;
+
+  constructor(title: string, description: string, price: number) {
+    this.id = randomUUID();
+    this.title = title;
+    this.description = description;
+    this.price = price;
+  }
 }

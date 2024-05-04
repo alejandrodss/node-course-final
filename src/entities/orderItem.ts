@@ -16,7 +16,7 @@ export class OrderItem {
   @Property()
   description: string;
 
-  @Property()
+  @Property({ columnType: 'float'})
   price: number;
 
   @Property()
