@@ -46,7 +46,6 @@ export class CartService {
   ) : Promise<Cart | ICart | CartEntity> {
     try {
       const cart = await this.cartRepository.getCart(userId) as CartEntity;
-      console.log("getting a cart", cart);
       const items = cart.items.getItems();
       const cartItemIndex = items.findIndex((cartItem) => (cartItem.product.id === productId));
       const cartItem: ICartItemEntity | CartItem | CartItemEntity = items[cartItemIndex];

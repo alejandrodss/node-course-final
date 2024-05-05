@@ -3,6 +3,7 @@ const admin = {
   password: '*SuperStr_n9Pa55w0#d#',
   role: 'admin',
   id: 'admin'
+  //uuid:a8b4379a-eabc-4cb6-86a9-652c7080c0bb
 }
 
 const product = {
@@ -16,7 +17,7 @@ const product2 = {
   id: 'ee16828a-9149-465e-a329-b969655eae41',
   title: 'Book 1',
   description: 'First book of a trilogy about misteries and dragons',
-  price: 30.33
+  price: 30.77
 }
 
 export default {

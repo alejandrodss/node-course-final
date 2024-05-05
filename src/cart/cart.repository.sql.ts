@@ -60,7 +60,6 @@ export class CartRepository implements CartBase {
     if (cart) {
       cart.isDeleted = true;
       await this.cartRepository.getEntityManager().persistAndFlush(cart);
-      console.log("deleting cart + ", cart);
       return;
     }
     throw new CartNotFoundError();

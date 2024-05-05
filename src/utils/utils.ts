@@ -32,7 +32,7 @@ export const itemsJsonResponse = (items: CartItem[] | CartItemEntity[]): Object 
   }
 }
 
-const orderItemsJsonResponse = (items: CartItem[] | CartItemEntity[] | OrderItemEntity[]): Object => {
+const orderItemsJsonResponse = (items: CartItem[] | CartItemEntity[] | OrderItemEntity[]): Object[] => {
   const itemsJson: Object[] = items.map((item) => {
     const product = (item instanceof OrderItemEntity) ? item : (item.product as Product)
     return ({
@@ -40,9 +40,7 @@ const orderItemsJsonResponse = (items: CartItem[] | CartItemEntity[] | OrderItem
       count: item.count
     });
   })
-  return {
-    items: itemsJson
-  }
+  return itemsJson;
 }
 
 export const productJsonResponse = (product: Product | OrderItemEntity): Object => {

@@ -42,7 +42,6 @@ export class CartRepository implements CartBase {
   }
 
   deleteCart(userId: string): void {
-    console.log(this.carts);
     const cart = this.carts.find((cart) => (cart.userId === userId && !cart.isDeleted));
     if(cart !== undefined) {
       cart.isDeleted = true;

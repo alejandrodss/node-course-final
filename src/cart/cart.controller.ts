@@ -43,7 +43,7 @@ const CartController = (cartService: CartService) : Router => {
       "data": {
         "cart": {
           "id": cart.id,
-          "items": itemsJsonResponse(items)
+          ...itemsJsonResponse(items)
         },
         "total": total
       },
@@ -79,7 +79,6 @@ const CartController = (cartService: CartService) : Router => {
         .status(200)
         .send(cartJsonResponse(cart));
     } catch (error) {
-      console.log(error);
       if ((error as Error).name === 'CartNotFound') {
         res
           .status(404)

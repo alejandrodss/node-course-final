@@ -35,14 +35,12 @@
         },
         "price": {
           "name": "price",
-          "type": "numeric(10,0)",
+          "type": "float",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 10,
-          "scale": 0,
-          "mappedType": "decimal"
+          "mappedType": "float"
         }
       },
       "name": "product",
@@ -268,12 +266,12 @@
         },
         "price": {
           "name": "price",
-          "type": "int",
+          "type": "float",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "mappedType": "float"
         },
         "count": {
           "name": "count",
