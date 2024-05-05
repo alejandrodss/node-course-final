@@ -9,7 +9,8 @@
     "stop": "./node_modules/.bin/pm2 stop nmp-project",
     "start-dev": "nodemon index.js",
     "build": "tsc",
-    "populate-db": "node ./build/DatasourceMongo.js"
+    "populate-mongo-db": "node ./build/DatasourceMongo.js",
+    "sql-init-db": "npx mikro-orm migration:fresh --seed"
   },
   "author": "J Alejandro Duarte S",
   "license": "MIT",
