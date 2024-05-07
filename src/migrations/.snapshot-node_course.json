@@ -237,8 +237,8 @@
           "nullable": false,
           "mappedType": "uuid"
         },
-        "id": {
-          "name": "id",
+        "product_id": {
+          "name": "product_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -289,9 +289,10 @@
         {
           "keyName": "order_item_pkey",
           "columnNames": [
-            "order_id"
+            "order_id",
+            "product_id"
           ],
-          "composite": false,
+          "composite": true,
           "constraint": true,
           "primary": true,
           "unique": true
@@ -309,7 +310,6 @@
             "id"
           ],
           "referencedTableName": "public.order",
-          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

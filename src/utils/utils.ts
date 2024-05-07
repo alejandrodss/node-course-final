@@ -45,7 +45,7 @@ const orderItemsJsonResponse = (items: CartItem[] | CartItemEntity[] | OrderItem
 
 export const productJsonResponse = (product: Product | OrderItemEntity): Object => {
   return({
-    id: product.id,
+    id: ((product instanceof OrderItemEntity) ? product.productId : product.id),
     title: product.title,
     description: product.description,
     price: product.price

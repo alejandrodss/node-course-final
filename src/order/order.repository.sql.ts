@@ -20,9 +20,9 @@ export class OrderRepostiory implements OrderBase {
         order.cartId,
         total
       );
-      const savedOrder = await this.orderRepository.insert(newOrder);
       this._setItems(order.items as CartItem[], newOrder);
-      console.log("Order created: ", savedOrder);
+      console.log("Order created: ", newOrder);
+      await this.orderRepository.getEntityManager().persistAndFlush(newOrder);
       return newOrder;
     } catch (err) {
       throw new DatabaseError("Error when creating new order");
@@ -59,8 +59,6 @@ export class OrderRepostiory implements OrderBase {
       });
       orderItems.push(orderItem);
     }
-    order.items.load();
     order.items.set(orderItems);
-    this.orderRepository.getEntityManager().flush();
   }
 }
