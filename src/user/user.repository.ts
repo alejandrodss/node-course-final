@@ -9,6 +9,10 @@ export class UserRepository implements UserBase {
   ) {
     this.users = database.users;
   }
+  
+  getUserByEmail(email: string) {
+    throw new Error("Method not implemented.");
+  }
 
   getUser(id: string): User {
     const user = this.users.find((user) => user.id === id);

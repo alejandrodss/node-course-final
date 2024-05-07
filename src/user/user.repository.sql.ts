@@ -1,6 +1,7 @@
 import { PostUser, User, UserBase } from '../types';
 import { EntityRepository } from '@mikro-orm/core';
 import { User as UserEntity} from '../entities/user';
+import { DatabaseError } from '../exceptions/DatabaseError';
 
 export class UserRepository implements UserBase {
   userRepository: EntityRepository<UserEntity>;
@@ -24,6 +25,14 @@ export class UserRepository implements UserBase {
       }
     } catch (err) {
       throw new Error(`User with id ${id} not found`);
+    }
+  }
+
+  async getUserByEmail(email: string) : Promise<UserEntity | null> {
+    try {
+      return await this.userRepository.findOne({ email: email });
+    } catch (err) {
+      throw new DatabaseError(`Error fetching user with email ${email}`);
     }
   }
 

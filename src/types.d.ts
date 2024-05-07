@@ -21,6 +21,7 @@ export type PostUser = Omit<User, 'id'>;
 export interface UserBase {
   users?: User[];
   getUser(id: string): User | Promise<IUser | User | UserEntity>;
+  getUserByEmail(email: string): Promise<IUser | User, UserEntity | null>;
   listUsers(): User[] | Promise<User[] | IUser[] | UserEntity[]>;
   createUser(user: PostUser): void | Promise<void>;
   deleteUser(id: string): void | Promise<void>;
