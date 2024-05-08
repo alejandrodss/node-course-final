@@ -2,6 +2,12 @@ import { ICart, ICartItemEntity } from "./schemas/ICart";
 import { IOrder } from "./schemas/IOrder";
 import { IProduct } from "./schemas/IProduct";
 import { IUser } from "./schemas/IUser";
+import { User as UserEntity } from "./entities/user";
+import { Product as ProductEntity } from "./entities/product";
+import { Cart as CartEntity } from "./entities/cart";
+import { CartItem as CartItemEntity} from "./entities/cartItem";
+import { Order as OrderEntity } from "./entities/order";
+import { OrderItem as OrderItemEntity } from "./entities/orderItem";
 
 export type User = {
   email: string,
@@ -14,8 +20,8 @@ export type PostUser = Omit<User, 'id'>;
 
 export interface UserBase {
   users?: User[];
-  getUser(id: string): User | Promise<IUser | User>;
-  listUsers(): User[] | Promise<User[] | IUser[]>;
+  getUser(id: string): User | Promise<IUser | User | UserEntity>;
+  listUsers(): User[] | Promise<User[] | IUser[] | UserEntity[]>;
   createUser(user: PostUser): void | Promise<void>;
   deleteUser(id: string): void | Promise<void>;
 }
@@ -31,8 +37,8 @@ export type PostProduct = Omit<Product, 'id'>;
 
 export interface ProductBase {
   products?: Product[];
-  getProduct(id: string): Product | Promise<IProduct | Product>;
-  listProducts(): Product[] | Promise<IProduct[] | Product[]>;
+  getProduct(id: string): Product | Promise<IProduct | Product | ProductEntity>;
+  listProducts(): Product[] | Promise<IProduct[] | Product[] | ProductEntity[]>;
   createProduct(product: PostProduct): void | Promise<void>;
   deleteProduct(id: string): void | Promise<void>;
 }
@@ -56,13 +62,13 @@ export type UpdateCartRequestBody = {
 
 export interface CartBase {
   carts?: Cart[];
-  getCart(userId: string): Cart | Promise<ICart | Cart>;
-  listCarts(): Cart[] | Promise<ICart[] | Cart[]>;
-  createCart(userId: string): Cart | Promise<ICart | Cart>;
+  getCart(userId: string): Cart | Promise<ICart | Cart | CartEntity>;
+  listCarts(): Cart[] | Promise<ICart[] | Cart[] | CartEntity[]>;
+  createCart(userId: string): Cart | Promise<ICart | Cart | CartEntity>;
   updateCart(
-    cart: Cart | ICart,
-    items: CartItem[] | ICartItemEntity[]
-  ): Cart | Promise<ICart | Cart>;
+    cart: Cart | ICart | CartEntity,
+    items: CartItem[] | ICartItemEntity[] | CartItemEntity[]
+  ): Cart | Promise<ICart | Cart | CartEntity>;
   deleteCart(userId: string): void | Promise<void>;
 }
 
@@ -77,13 +83,13 @@ export type Delivery = {
   address: string
 };
 
-type ORDER_STATUS = 'created' | 'completed';
+export type ORDER_STATUS = 'created' | 'completed';
 
 export type Order = {
   id: string,
   userId: string,
   cartId: string,
-  items: CartItem[],
+  items: CartItem[] | OrderItemEntity[] | CartItemEntity[],
   payment?: Payment,
   delivery?: Delivery,
   comments?: string,
@@ -94,17 +100,17 @@ export type Order = {
 export type PostOrder = {
     userId: string,
     cartId: string,
-    items: CartItem[],
+    items: CartItem[] | CartItemEntity[],
     comments: string | '',
     status: ORDER_STATUS
 };
 
 export interface OrderBase {
   orders?: Order[];
-  createOrder(order: PostOrder): Order | Promise<IOrder | Order>;
-  getOrder(id: string): Order | Promise<IOrder | Order>;
+  createOrder(order: PostOrder): Order | Promise<IOrder | Order | OrderEntity>;
+  getOrder(id: string): Order | Promise<IOrder | Order | OrderEntity>;
   updateOrder(id: string, attrs: any[]);
-  listOrders(): Order[] | Promise<IOrder[] | Order[]>;
+  listOrders(): Order[] | Promise<IOrder[] | Order[] | OrderEntity[]>;
 }
 
 export type DatabaseEntities = {

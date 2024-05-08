@@ -1,13 +1,13 @@
 import { randomUUID } from "crypto";
 import MongoOrder, { IOrder } from "../schemas/IOrder";
-import { Order, OrderBase, PostOrder } from "../types";
+import { CartItem, Order, OrderBase, PostOrder } from "../types";
 import { calculateTotal } from "../utils/utils";
 import { DatabaseError } from "../exceptions/DatabaseError";
 
 export class OrderRepostiory implements OrderBase {
   async createOrder(order: PostOrder): Promise<Order | IOrder> {
     try {
-      const total = calculateTotal(order.items);
+      const total = calculateTotal(order.items as CartItem[]);
       const newOrder: IOrder = new MongoOrder({
         ...order,
         id: randomUUID(),

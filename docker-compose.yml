@@ -1,15 +1,19 @@
 version: '3.1'
 services:
-  mongo:
-    image: "mongodb/mongodb-community-server:latest"
-    container_name: "nodegmp-nosql"
+  postgres:
+    image: "postgres:16"
+    container_name: "nodegmp-postgresql"
+    shm_size: 128mb
     restart: always
     env_file:
       - .env
     ports:
-      - 27017:27017
+      - 5432:5432
     volumes:
-      - mongo-db:/data/db
-
+      - type: tmpfs
+        target: /dev/shm
+        name: "postgres-db"
+        tmpfs:
+          size: 134217728 # 128*2^20 bytes = 128Mb
 volumes:
-  mongo-db:
+  postgres-db:
