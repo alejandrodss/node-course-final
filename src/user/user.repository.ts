@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import { UserBase, User, PostUser, DatabaseEntities } from "../types";
-import { IUser } from "../schemas/IUser";
 
 export class UserRepository implements UserBase {
   users: User[];
@@ -26,12 +25,13 @@ export class UserRepository implements UserBase {
       return this.users;
   }
 
-  createUser(user: PostUser): void {
+  async createUser(user: PostUser): Promise<User> {
     let newUser: User = {
       ...user,
       id: randomUUID()
     }
     this.users.push(newUser);
+    return newUser;
   }
 
   deleteUser(id: string): void {

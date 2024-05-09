@@ -23,7 +23,7 @@ export interface UserBase {
   getUser(id: string): User | Promise<IUser | User | UserEntity>;
   getUserByEmail(email: string): Promise<IUser | User, UserEntity | null>;
   listUsers(): User[] | Promise<User[] | IUser[] | UserEntity[]>;
-  createUser(user: PostUser): void | Promise<void>;
+  createUser(user: PostUser): Promise<User | IUser | UserEntity>;
   deleteUser(id: string): void | Promise<void>;
 }
 
@@ -120,3 +120,7 @@ export type DatabaseEntities = {
   carts: Cart[]
   orders: Order []
 };
+
+export type LoginResponse = {
+  token: string;
+}
