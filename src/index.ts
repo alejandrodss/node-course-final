@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction} from 'express';
+import express from 'express';
 import 'dotenv/config';
 import http from 'http';
 
@@ -24,6 +24,7 @@ import { User } from './entities/user';
 import { Product } from './entities/product';
 import { Order } from './entities/order';
 import { Cart } from './entities/cart';
+import { verifyToken } from './middleware/auth';
 
 export const DI = {} as {
   server: http.Server;
@@ -60,33 +61,6 @@ export const init = (async() => {
   const cartService = new CartService(cartRepository, productService);
   const orderService = new OrderService(orderRepository);
 
-  //Middlewares
-  const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.get('x-user-id');
-    if (userId == undefined) {
-      //	Forbidden(when authorization header is missing)
-      res.status(403).send({
-        "data": null,
-        "error": {
-          "message": "You must be authorized user"
-        }
-      });
-    } else {
-      try {
-        await userService.getUser(userId);
-        next();
-      } catch {
-        // 	Unauthorized(when no user matching authorization header is found)
-        res.status(401).send({
-          "data": null,
-          "error": {
-            "message": "User is not authorized"
-          }
-        });
-      }
-    }
-  }
-
   // Routers
   const userRouter = UserController(userService);
   const productRouter = ProductController(productService);
@@ -95,11 +69,10 @@ export const init = (async() => {
 
   app.use(express.json());
   app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
-  app.use(authMiddleware);
   app.use('/api/auth', userRouter);
-  app.use('/api/products', productRouter);
-  app.use('/api/profile', cartRouter);
-  app.use('/api/profile/cart', orderRouter);
+  app.use('/api/products', verifyToken, productRouter);
+  app.use('/api/profile', verifyToken, cartRouter);
+  app.use('/api/profile/cart', verifyToken, orderRouter);
 
   DI.server = app.listen(3000, () => {
     console.log('Server is started');

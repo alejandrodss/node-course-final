@@ -3,10 +3,10 @@ import Joi from 'joi';
 import { Cart, CartItem, UpdateCartRequestBody } from '../types';
 import { CartService } from './cart.service';
 import { calculateTotal, calculateTotalSql, itemsJsonResponse } from '../utils/utils';
-import { ProductService } from '../product/product.service';
 import { BaseError } from '../exceptions/BaseError';
 import { Cart as CartEntity} from '../entities/cart';
 import { CartItem as CartItemEntity} from '../entities/cartItem';
+import { isAdmin } from '../middleware/authorization';
 
 const CartController = (cartService: CartService) : Router => {
   const cartRouter: Router = express.Router();
@@ -52,9 +52,9 @@ const CartController = (cartService: CartService) : Router => {
   };
 
   cartRouter.get('/cart', async (req, res, next) => {
-    const userId = req.get('x-user-id');
+    const userId = req.user.id;
     try  {
-      const cart = await cartService.getOrCreateUserCart(userId as string) as CartEntity;
+      const cart = await cartService.getOrCreateUserCart(userId) as CartEntity;
       res
         .status(200)
         .send(cartJsonResponse(cart));
@@ -72,7 +72,7 @@ const CartController = (cartService: CartService) : Router => {
 
   cartRouter.put('/cart', validatePutCartBody ,async (req, res, next) => {
     const { productId, count } = req.body as UpdateCartRequestBody;
-    const userId = req.get('x-user-id') as string;
+    const userId = req.user.id;
     try {
       const cart = await cartService.updateUserCart(userId, productId, count);
       res
@@ -110,8 +110,8 @@ const CartController = (cartService: CartService) : Router => {
     }
   });
 
-  cartRouter.delete('/cart', async (req, res, next) => {
-    const userId = req.get('x-user-id') as string;
+  cartRouter.delete('/cart', isAdmin, async (req, res, next) => {
+    const userId = req.user.id;
     try {
       await cartService.deleteUserCart(userId);
       res

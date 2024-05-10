@@ -8,7 +8,7 @@ const OrderController = (orderService: OrderService, cartService: CartService) :
   const orderRouter: Router = express.Router() ;
 
   orderRouter.post('/checkout', async (req, res, next) => {
-    const userId = req.get('x-user-id') as string;
+    const userId = req.user.id;
     try {
       const cart = await cartService.getUserCart(userId);
       if(cart.items.length > 0) {

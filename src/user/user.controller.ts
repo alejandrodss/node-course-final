@@ -3,6 +3,8 @@ import { UserService } from './user.service';
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import { NoValidCredentialsError } from '../exceptions/NoValidCredentialsError';
+import { verifyToken } from '../middleware/auth';
+import { isAdmin } from '../middleware/authorization';
 
 const UserController = (userService: UserService) : Router => {
   const usersRouter: Router = express.Router();
@@ -48,7 +50,7 @@ const UserController = (userService: UserService) : Router => {
     }
   };
 
-  usersRouter.get('/:userId', async (req, res, next) => {
+  usersRouter.get('/:userId', verifyToken, isAdmin, async (req, res, next) => {
     const userId = req.params.userId;
     try{
       const user = await userService.getUser(userId);

@@ -9,6 +9,14 @@ import { CartItem as CartItemEntity} from "./entities/cartItem";
 import { Order as OrderEntity } from "./entities/order";
 import { OrderItem as OrderItemEntity } from "./entities/orderItem";
 
+declare global {
+    namespace Express {
+        interface Request {
+            user: CurrentUser
+        }
+    }
+}
+
 export type User = {
   email: string,
   password: string,
@@ -17,6 +25,7 @@ export type User = {
 };
 
 export type PostUser = Omit<User, 'id'>;
+export type CurrentUser = Omit<User, 'password'>;
 
 export interface UserBase {
   users?: User[];
