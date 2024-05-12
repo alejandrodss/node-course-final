@@ -37,7 +37,8 @@
     "joi": "^17.12.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "winston": "^3.13.0"
   },
   "mikro-orm": {
     "useTsNode": true,
