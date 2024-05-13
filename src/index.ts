@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import http from 'http';
 import winston from 'winston';
+import morgan from 'morgan';
 
 import UserController from './user/user.controller';
 import ProductController from './product/product.controller';
@@ -74,6 +75,15 @@ export const init = (async() => {
   const healthRouter = HealthController(DI.orm);
 
   app.use(express.json());
+  app.use(morgan(function (tokens : any, req : any, res : any) {
+    return [
+      '[', tokens.date(req, res, 'web'), ']',
+      tokens.status(req, res) === "" ? "ERROR" : "INFO",
+      tokens.method(req, res),
+      tokens.url(req, res), '-',
+      tokens['response-time'](req, res), 'ms'
+    ].join(' ')
+  }));
   app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
   app.use('/health', healthRouter);
   app.use('/api/auth', userRouter);
