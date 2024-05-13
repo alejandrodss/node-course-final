@@ -5,9 +5,11 @@ import { Order as OrderEntity } from "../entities/order";
 import { EntityRepository } from "@mikro-orm/core";
 import { CartItem } from "../entities/cartItem";
 import { OrderItem } from "../entities/orderItem";
+import Logger from "../utils/logger";
 
 export class OrderRepostiory implements OrderBase {
   orderRepository: EntityRepository<OrderEntity>;
+  logger : Logger = Logger.getInstance();
 
   constructor(repository: EntityRepository<OrderEntity>) {
     this.orderRepository = repository;
@@ -21,10 +23,11 @@ export class OrderRepostiory implements OrderBase {
         total
       );
       this._setItems(order.items as CartItem[], newOrder);
-      console.log("Order created: ", newOrder);
+      this.logger.info("Order created: ", newOrder);
       await this.orderRepository.getEntityManager().persistAndFlush(newOrder);
       return newOrder;
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError("Error when creating new order");
     }
   }

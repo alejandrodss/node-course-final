@@ -1,6 +1,7 @@
 import express from 'express';
 import 'dotenv/config';
 import http from 'http';
+import winston from 'winston';
 
 import UserController from './user/user.controller';
 import ProductController from './product/product.controller';
@@ -26,6 +27,7 @@ import { Order } from './entities/order';
 import { Cart } from './entities/cart';
 import { verifyToken } from './middleware/auth';
 import HealthController from './health/health.controller';
+import Logger from './utils/logger';
 
 export const DI = {} as {
   server: http.Server;
@@ -35,6 +37,7 @@ export const DI = {} as {
   productRepository: EntityRepository<Product>;
   cartRepository: EntityRepository<Cart>;
   orderRepository: EntityRepository<Order>;
+  logger: winston.Logger;
 }
 
 export const app = express();
@@ -47,6 +50,7 @@ export const init = (async() => {
   DI.productRepository = DI.orm.em.getRepository(Product);
   DI.cartRepository = DI.orm.em.getRepository(Cart);
   DI.orderRepository = DI.orm.em.getRepository(Order);
+  DI.logger = Logger.getInstance();
 
   // Repositories init
   const cartRepository = new CartRepository(DI.cartRepository);
@@ -78,7 +82,7 @@ export const init = (async() => {
   app.use('/api/profile/cart', verifyToken, orderRouter);
 
   DI.server = app.listen(3000, () => {
-    console.log('Server is started');
+    DI.logger.info('Server is started');
   });
 
   let connections: any[] = [];
@@ -92,15 +96,15 @@ export const init = (async() => {
   });
 
   function shutdown() {
-    console.info('Received kill signal, shutting down gracefully');
+    DI.logger.info('Received kill signal, shutting down gracefully')
 
     DI.server.close(() => {
-      console.info('Closing remaining connections');
+      DI.logger.info('Closing remaining connections');
       process.exit(0)
     });
 
     setTimeout(() => {
-      console.error('It was not able to close current connections on time, forcing shut down');
+      DI.logger.error('It was not able to close current connections on time, forcing shut down');
       process.exit(1);
     }, 20000);
 

@@ -5,9 +5,11 @@ import bcrypt from 'bcryptjs';
 import { NoValidCredentialsError } from '../exceptions/NoValidCredentialsError';
 import { verifyToken } from '../middleware/auth';
 import { isAdmin } from '../middleware/authorization';
+import Logger from '../utils/logger';
 
 const UserController = (userService: UserService) : Router => {
   const usersRouter: Router = express.Router();
+  const logger : Logger = Logger.getInstance();
 
   const createUserSchema = Joi.object({
     email: Joi.string().email().required(),
@@ -25,7 +27,6 @@ const UserController = (userService: UserService) : Router => {
       await createUserSchema.validateAsync(req.body);
       next();
     } catch (err) {
-      console.log("logging there", err)
       res.status(400).send({
         "data": null,
         "error": {
@@ -40,7 +41,7 @@ const UserController = (userService: UserService) : Router => {
       await loginUserSchema.validateAsync(req.body);
       next();
     } catch (err) {
-      console.log("logging there", err)
+      logger.debug("logging there", err);
       res.status(400).send({
         "data": null,
         "error": {
@@ -100,7 +101,7 @@ const UserController = (userService: UserService) : Router => {
         }
       )
     } catch(error) {
-      console.log(error);
+      logger.error((error as Error).message);
       res.status(500)
         .send({
           "data": null,
@@ -135,6 +136,7 @@ const UserController = (userService: UserService) : Router => {
         });
         return;
       }
+      logger.error((error as Error).message);
       res.status(500)
       .send({
         "data": null,
