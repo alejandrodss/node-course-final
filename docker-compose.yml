@@ -1,5 +1,17 @@
 version: '3.1'
 services:
+  web:
+    container_name: "node-app"
+    build: .
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - node_app_network
   postgres:
     image: "postgres:16"
     container_name: "nodegmp-postgresql"
@@ -15,5 +27,9 @@ services:
         name: "postgres-db"
         tmpfs:
           size: 134217728 # 128*2^20 bytes = 128Mb
+    networks:
+      - node_app_network
 volumes:
   postgres-db:
+networks:
+  node_app_network:

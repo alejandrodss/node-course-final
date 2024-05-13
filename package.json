@@ -7,7 +7,8 @@
     "test": "npm test",
     "start": "./node_modules/.bin/pm2 start ./build/index.js --name nmp-project",
     "stop": "./node_modules/.bin/pm2 stop nmp-project",
-    "start-dev": "nodemon index.js",
+    "start-dev": "NODE_ENV=test build/index.js",
+    "start-prod": "NODE_ENV=production node ./build/index.js",
     "build": "tsc",
     "populate-mongo-db": "node ./build/DatasourceMongo.js",
     "sql-init-db": "npx mikro-orm migration:fresh --seed"
