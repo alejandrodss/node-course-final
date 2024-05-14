@@ -8,6 +8,11 @@ services:
       - 3000:3000
     env_file:
       - .env
+    environment:
+      -  MIKRO_ORM_DB_NAME=${POSTGRES_DB}
+      -  MIKRO_ORM_USER=${POSTGRES_USER}
+      -  MIKRO_ORM_PASSWORD=${POSTGRES_PASSWORD}
+      -  MIKRO_ORM_HOST=postgres
     depends_on:
       - postgres
     networks:
