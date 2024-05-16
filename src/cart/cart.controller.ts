@@ -111,7 +111,17 @@ const CartController = (cartService: CartService) : Router => {
   });
 
   cartRouter.delete('/cart', isAdmin, async (req, res, next) => {
-    const userId = req.user.id;
+    const userId = req.get('x-user-id');
+    if(userId === undefined) {
+      return res.status(400)
+      .send({
+        "data": null,
+        "error": {
+          "message": "x-user-id header is missing, unable to complete the request"
+        }
+      });
+    }
+
     try {
       await cartService.deleteUserCart(userId);
       res
