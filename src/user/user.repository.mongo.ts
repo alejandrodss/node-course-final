@@ -3,6 +3,10 @@ import MongoUser, { IUser } from '../schemas/IUser';
 import { PostUser, User, UserBase } from '../types';
 
 export class UserRepository implements UserBase {
+  users?: User[] | undefined;
+  getUserByEmail(email: string) {
+    throw new Error('Method not implemented.');
+  }
   async getUser(id: string): Promise<IUser | User> {
     try {
       MongoUser.db.useDb("node-course");
@@ -33,7 +37,7 @@ export class UserRepository implements UserBase {
     }
   }
 
-  async createUser(user: PostUser): Promise<void> {
+  async createUser(user: PostUser): Promise<IUser> {
     try {
       const newUser = new MongoUser({
         id: randomUUID(),
@@ -44,6 +48,7 @@ export class UserRepository implements UserBase {
 
       const savedUser = await newUser.save();
       console.log("User created: ", savedUser);
+      return savedUser;
     } catch (err) {
       throw new Error(`There was an error creating the user ${err}`);
     }

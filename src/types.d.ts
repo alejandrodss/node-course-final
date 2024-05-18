@@ -9,6 +9,14 @@ import { CartItem as CartItemEntity} from "./entities/cartItem";
 import { Order as OrderEntity } from "./entities/order";
 import { OrderItem as OrderItemEntity } from "./entities/orderItem";
 
+declare global {
+    namespace Express {
+        interface Request {
+            user: CurrentUser
+        }
+    }
+}
+
 export type User = {
   email: string,
   password: string,
@@ -17,12 +25,14 @@ export type User = {
 };
 
 export type PostUser = Omit<User, 'id'>;
+export type CurrentUser = Omit<User, 'password'>;
 
 export interface UserBase {
   users?: User[];
   getUser(id: string): User | Promise<IUser | User | UserEntity>;
+  getUserByEmail(email: string): Promise<IUser | User, UserEntity | null>;
   listUsers(): User[] | Promise<User[] | IUser[] | UserEntity[]>;
-  createUser(user: PostUser): void | Promise<void>;
+  createUser(user: PostUser): Promise<User | IUser | UserEntity>;
   deleteUser(id: string): void | Promise<void>;
 }
 
@@ -119,3 +129,7 @@ export type DatabaseEntities = {
   carts: Cart[]
   orders: Order []
 };
+
+export type LoginResponse = {
+  token: string;
+}

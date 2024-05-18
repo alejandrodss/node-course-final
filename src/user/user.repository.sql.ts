@@ -1,6 +1,7 @@
 import { PostUser, User, UserBase } from '../types';
 import { EntityRepository } from '@mikro-orm/core';
 import { User as UserEntity} from '../entities/user';
+import { DatabaseError } from '../exceptions/DatabaseError';
 
 export class UserRepository implements UserBase {
   userRepository: EntityRepository<UserEntity>;
@@ -27,6 +28,14 @@ export class UserRepository implements UserBase {
     }
   }
 
+  async getUserByEmail(email: string) : Promise<UserEntity | null> {
+    try {
+      return await this.userRepository.findOne({ email: email });
+    } catch (err) {
+      throw new DatabaseError(`Error fetching user with email ${email}`);
+    }
+  }
+
   async listUsers(): Promise<UserEntity[]> {
     try {
       const users = await this.userRepository.findAll();
@@ -36,7 +45,7 @@ export class UserRepository implements UserBase {
     }
   }
 
-  async createUser(user: PostUser): Promise<void> {
+  async createUser(user: PostUser): Promise<UserEntity> {
     try {
       const newUser = new UserEntity(
         user.password,
@@ -44,8 +53,9 @@ export class UserRepository implements UserBase {
         user.role
       );
 
-      const savedUser = await this.userRepository.insert(newUser);
-      console.log("User created: ", savedUser);
+      await this.userRepository.getEntityManager().persistAndFlush(newUser);
+      console.log("User created: ", newUser);
+      return newUser;
     } catch (err) {
       throw new Error(`There was an error creating the user ${err}`);
     }
