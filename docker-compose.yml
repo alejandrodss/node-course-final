@@ -1,5 +1,22 @@
 version: '3.1'
 services:
+  web:
+    container_name: "node-app"
+    build: .
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      -  MIKRO_ORM_DB_NAME=${POSTGRES_DB}
+      -  MIKRO_ORM_USER=${POSTGRES_USER}
+      -  MIKRO_ORM_PASSWORD=${POSTGRES_PASSWORD}
+      -  MIKRO_ORM_HOST=postgres
+    depends_on:
+      - postgres
+    networks:
+      - node_app_network
   postgres:
     image: "postgres:16"
     container_name: "nodegmp-postgresql"
@@ -15,5 +32,9 @@ services:
         name: "postgres-db"
         tmpfs:
           size: 134217728 # 128*2^20 bytes = 128Mb
+    networks:
+      - node_app_network
 volumes:
   postgres-db:
+networks:
+  node_app_network:

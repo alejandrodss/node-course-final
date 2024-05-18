@@ -2,9 +2,11 @@ import { PostUser, User, UserBase } from '../types';
 import { EntityRepository } from '@mikro-orm/core';
 import { User as UserEntity} from '../entities/user';
 import { DatabaseError } from '../exceptions/DatabaseError';
+import Logger from '../utils/logger';
 
 export class UserRepository implements UserBase {
   userRepository: EntityRepository<UserEntity>;
+  logger : Logger = Logger.getInstance();
 
   constructor(repository: EntityRepository<UserEntity>) {
     this.userRepository = repository;
@@ -24,7 +26,8 @@ export class UserRepository implements UserBase {
         throw new Error(`User with id ${id} not found`);
       }
     } catch (err) {
-      throw new Error(`User with id ${id} not found`);
+      this.logger.error((err as Error).message);
+      throw new DatabaseError(`Error fetching user with ${id}`);
     }
   }
 
@@ -32,6 +35,7 @@ export class UserRepository implements UserBase {
     try {
       return await this.userRepository.findOne({ email: email });
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`Error fetching user with email ${email}`);
     }
   }
@@ -41,6 +45,7 @@ export class UserRepository implements UserBase {
       const users = await this.userRepository.findAll();
       return users;
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new Error(`There was an error fetching users ${err}`)
     }
   }
@@ -54,9 +59,10 @@ export class UserRepository implements UserBase {
       );
 
       await this.userRepository.getEntityManager().persistAndFlush(newUser);
-      console.log("User created: ", newUser);
+      this.logger.debug("User created: ", newUser);
       return newUser;
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new Error(`There was an error creating the user ${err}`);
     }
   }
@@ -67,9 +73,10 @@ export class UserRepository implements UserBase {
       if(user !== null) {
         user.email = "john.doe@example.com";
         await this.userRepository.upsert(user);
-        console.log("Update result: ", user);
+        this.logger.debug("Update result: ", user);
       }
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new Error(`There was an error updating the user ${err}`);
     }
   }
@@ -79,9 +86,10 @@ export class UserRepository implements UserBase {
       const user = await this.userRepository.findOne({ id });
       if (user !== null) {
         const result = await this.userRepository.getEntityManager().removeAndFlush(user);
-        console.log("Delete result: ", result);
+        this.logger.debug("Delete result: ", result);
       }
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new Error(`There was an error deleting the user ${err}`);
     }
   }

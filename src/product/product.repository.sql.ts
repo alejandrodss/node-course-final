@@ -4,9 +4,11 @@ import { DatabaseError } from "../exceptions/DatabaseError";
 import { BaseError } from "../exceptions/BaseError";
 import { EntityRepository } from "@mikro-orm/core";
 import { Product as ProductEntity } from "../entities/product";
+import Logger from "../utils/logger";
 
 export class ProductRepository implements ProductBase {
   productRepository: EntityRepository<ProductEntity>;
+  logger : Logger = Logger.getInstance();
 
   constructor(repository: EntityRepository<ProductEntity>) {
     this.productRepository = repository;
@@ -22,6 +24,7 @@ export class ProductRepository implements ProductBase {
       if ((err as BaseError).name === "ProductNotFound") {
         throw err;
       }
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error fetching product with id ${id}`);
     }
   }
@@ -30,6 +33,7 @@ export class ProductRepository implements ProductBase {
     try {
       return await this.productRepository.findAll();
     } catch (err){
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error fetching products ${err}`);
     }
   }
@@ -43,6 +47,7 @@ export class ProductRepository implements ProductBase {
       );
       await this.productRepository.insert(newProduct);
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error creating the product ${err}`);
     }
   }
@@ -52,9 +57,10 @@ export class ProductRepository implements ProductBase {
       const product = await this.productRepository.findOne({ id });
       if (product !== null) {
         const result = await this.productRepository.getEntityManager().removeAndFlush(product);
-        console.log("Delete result: ", result);
+        this.logger.debug("Delete result: ", result);
       }
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error deleting the product ${err}`);
     }
   }

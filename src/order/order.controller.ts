@@ -3,9 +3,11 @@ import { OrderService } from './order.service';
 import { CartService } from '../cart/cart.service';
 import { BaseError } from '../exceptions/BaseError';
 import { orderJsonResponse } from '../utils/utils';
+import Logger from '../utils/logger';
 
 const OrderController = (orderService: OrderService, cartService: CartService) : Router => {
-  const orderRouter: Router = express.Router() ;
+  const orderRouter: Router = express.Router();
+  const logger : Logger = Logger.getInstance();
 
   orderRouter.post('/checkout', async (req, res, next) => {
     const userId = req.user.id;
@@ -42,6 +44,7 @@ const OrderController = (orderService: OrderService, cartService: CartService) :
           });
           return;
       }
+      logger.error((error as Error).message);
       res
         .status(500)
         .send({

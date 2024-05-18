@@ -4,9 +4,11 @@ import { DatabaseError } from "../exceptions/DatabaseError";
 import { Cart as CartEntity } from "../entities/cart";
 import { EntityRepository } from "@mikro-orm/core";
 import { CartItem, CartItemDTO } from "../entities/cartItem";
+import Logger from "../utils/logger";
 
 export class CartRepository implements CartBase {
   cartRepository: EntityRepository<CartEntity>;
+  logger : Logger = Logger.getInstance();
 
   constructor(repository: EntityRepository<CartEntity>) {
     this.cartRepository = repository;
@@ -25,6 +27,7 @@ export class CartRepository implements CartBase {
       if (err instanceof CartNotFoundError) {
         throw err;
       }
+      this.logger.error(err.message);
       throw new DatabaseError(`There was an error fetching cart for user with id ${userId}`);
     }
   }
@@ -42,6 +45,7 @@ export class CartRepository implements CartBase {
       await this.cartRepository.insert(newCart);
       return newCart;
     } catch (err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error creating the cart ${err}`);
     }
   }
@@ -52,6 +56,7 @@ export class CartRepository implements CartBase {
       await this.cartRepository.getEntityManager().flush();
       return cart;
     } catch(err) {
+      this.logger.error((err as Error).message);
       throw new DatabaseError(`There was an error updating the cart ${err}`);
     }
   }

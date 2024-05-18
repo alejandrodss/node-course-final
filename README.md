@@ -20,22 +20,21 @@ MONGODB_INITDB_ROOT_PASSWORD -> need for running mongo, if you are using sql, sk
 POSTGRES_PASSWORD
 POSTGRES_USER
 POSTGRES_DB
-MIKRO_ORM_DB_NAME
-MIKRO_ORM_USER
-MIKRO_ORM_PASSWORD
-MIKRO_ORM_HOST=localhost
 
 Set up the project by running `npm install`
 Once dependencies are installed run `npm run build` to compile the project, this script will create a build directory that it will be used by npm run start command.
 
-The project include a docker-compose file for running the database. Before running the server, make sure the database is running.
+The project include a docker-compose file for running the database and web service.
 You can use podman or docker, ex. `podman compose up -d`.
+
+Once the DB container is running we need to run migrations.
 
 Running migrations and seed the database
 You can run `npm run sql-init-db`, for running migrations and seed the database with initial values.
 It will create an admin user and two products.
 
 Running the server
+Note: If you're running docker-compose, you can skip this step
 Once you have compilled the ./src files and you have a database running, you can run `npm run start` to start the server.
 Server will be running on port 3000
 

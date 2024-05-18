@@ -7,9 +7,11 @@ import { BaseError } from '../exceptions/BaseError';
 import { Cart as CartEntity} from '../entities/cart';
 import { CartItem as CartItemEntity} from '../entities/cartItem';
 import { isAdmin } from '../middleware/authorization';
+import Logger from '../utils/logger';
 
 const CartController = (cartService: CartService) : Router => {
   const cartRouter: Router = express.Router();
+  const logger: Logger = Logger.getInstance();
 
   const putCartSchema = Joi.object({
     productId: Joi.string().uuid().required(),
@@ -22,7 +24,6 @@ const CartController = (cartService: CartService) : Router => {
       await putCartSchema.validateAsync(req.body);
       next();
     } catch (err) {
-      console.log("logging there", err)
       res.status(400).send({
         "data": null,
         "error": {
@@ -59,6 +60,7 @@ const CartController = (cartService: CartService) : Router => {
         .status(200)
         .send(cartJsonResponse(cart));
     } catch(err) {
+      logger.error((err as Error).message);
       res
         .status((err as BaseError).status)
         .send({
@@ -98,6 +100,7 @@ const CartController = (cartService: CartService) : Router => {
             }
           });
       } else {
+        logger.error((error as Error).message);
         res
           .status(500)
           .send({
@@ -124,6 +127,7 @@ const CartController = (cartService: CartService) : Router => {
           "error": null
         });
     } catch(error) {
+      logger.error((error as Error).message);
       res
         .status(500)
         .send({
