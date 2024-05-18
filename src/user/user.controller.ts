@@ -50,7 +50,7 @@ const UserController = (userService: UserService) : Router => {
     }
   };
 
-  usersRouter.get('/:userId', verifyToken, isAdmin, async (req, res, next) => {
+  usersRouter.get('/:userId', verifyToken, isAdmin, async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.userId;
     try{
       const user = await userService.getUser(userId);
